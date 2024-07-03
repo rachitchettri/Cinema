@@ -1,0 +1,8 @@
+/* src/components/SeatGrid.css */
+.seat-grid {
+    display: flex;
+    flex-wrap: wrap;
+    width: 200px; /* Adjust width based on the number of seats per row */
+    margin: auto;
+  }
+  
