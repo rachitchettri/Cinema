@@ -2,7 +2,8 @@
 .seat-grid {
     display: flex;
     flex-wrap: wrap;
-    width: 200px; /* Adjust width based on the number of seats per row */
+    width: 550px; /* Adjust width based on the number of seats per row */
     margin: auto;
+    gap: 7px;
   }
   

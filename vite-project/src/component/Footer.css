@@ -1,0 +1,20 @@
+.foo{
+    background-color: #0270bb;
+    padding: 10px 10px;
+    color: white;
+    display: flex;
+    gap: 82vw;
+}
+button{
+    color:white;
+    background-color: #44b35e;
+    display: block;
+    text-align: center;
+    border-radius: 10px  ;
+    cursor: pointer;
+    font-weight: 500;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    
+    
+}
