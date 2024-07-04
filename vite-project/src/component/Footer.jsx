@@ -1,11 +1,11 @@
 import React from "react";
 import "./Footer.css";
-const Footer = ({ totalCost }) => {
+const Footer = ({ totalCost , onBuyNow }) => {
   return (
     <footer>
       <div className="foo">
       <p>Total Cost: ₹{totalCost}</p>
-        <button>Buy Now</button>
+        <button onClick={onBuyNow}>Buy Now</button>
       </div> 
      
       

@@ -3,6 +3,9 @@ import SeatGrid from "./component/SeatGrid";
 import "./App.css";
 import Navbar from "./component/Navbar";
 import Footer from "./component/Footer";
+import { loadStripe } from "@stripe/stripe-js";
+
+const stripePromise = loadStripe("your-stripe-public-key");
 
 const App = () => {
   const [seats, setSeats] = useState([
@@ -196,6 +199,38 @@ const App = () => {
     return selectedSeats.reduce((total, seat) => (total += seat.price), 0);
   };
 
+  const handleBuyNow = async () => {
+    const selectedSeats = seats.filter((seat) => seat.isSelected);
+
+    if (selectedSeats.length === 0) {
+      alert("No seats selected.");
+      return;
+    }
+    const stripe = await stripePromise;
+    const response = await fetch("/create-checkout-session", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        items: selectedSeats.map((seat) => ({
+          id: seat.id,
+          price: seat.price,
+        })),
+      }),
+    });
+
+    const session = await response.json();
+
+    const result = await stripe.redirectToCheckout({
+      sessionId: session.id,
+    });
+
+    if (result.error) {
+      alert(result.error.message);
+    }
+  };
+
   return (
     <div className="App">
       <Navbar />
@@ -239,7 +274,7 @@ const App = () => {
           </defs>
         </svg>
       </div>
-      <Footer totalCost={calculateTotalCost()} />
+      <Footer totalCost={calculateTotalCost()} onBuyNow={handleBuyNow} />
     </div>
   );
 };
