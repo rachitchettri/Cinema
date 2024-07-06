@@ -3,9 +3,6 @@ import SeatGrid from "./component/SeatGrid";
 import "./App.css";
 import Navbar from "./component/Navbar";
 import Footer from "./component/Footer";
-import { loadStripe } from "@stripe/stripe-js";
-
-const stripePromise = loadStripe("your-stripe-public-key");
 
 const App = () => {
   const [seats, setSeats] = useState([
@@ -185,7 +182,9 @@ const App = () => {
     { id: 3, isBooked: false, isSelected: false, price: 300 },
     { id: 2, isBooked: false, isSelected: false, price: 300 },
     { id: 1, isBooked: false, isSelected: false, price: 300 },
+    
   ]);
+
   const handleSeatClick = (id) => {
     setSeats(
       seats.map((seat) =>
@@ -201,42 +200,42 @@ const App = () => {
 
   const handleBuyNow = async () => {
     const selectedSeats = seats.filter((seat) => seat.isSelected);
-
+  
     if (selectedSeats.length === 0) {
       alert("No seats selected.");
       return;
     }
-    const stripe = await stripePromise;
-    const response = await fetch("/create-checkout-session", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        items: selectedSeats.map((seat) => ({
-          id: seat.id,
-          price: seat.price,
-        })),
-      }),
-    });
-
-    const session = await response.json();
-
-    const result = await stripe.redirectToCheckout({
-      sessionId: session.id,
-    });
-
-    if (result.error) {
-      alert(result.error.message);
+  
+    try {
+      const response = await fetch("/create-esewa-transaction", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          items: selectedSeats.map((seat) => ({
+            id: seat.id,
+            price: seat.price,
+          })),
+        }),
+      });
+  
+      const transaction = await response.json();
+  
+      if (transaction.success) {
+        window.location.href = transaction.redirectUrl;
+      } else {
+        alert(transaction.message);
+      }
+    } catch (error) {
+      console.error("Error during eSewa transaction:", error);
+      alert("An error occurred. Please try again.");
     }
   };
-
   return (
     <div className="App">
       <Navbar />
-
       <SeatGrid seats={seats} onSeatClick={handleSeatClick} />
-
       <div className="screen">
         <svg
           width="300"
@@ -280,3 +279,7 @@ const App = () => {
 };
 
 export default App;
+
+
+
+
